@@ -1,0 +1,949 @@
+/* ==========================================================================
+   TTS Matematika - Responsive Design System
+   Modes supported: Mode IFP, Mode Desktop, Mode Tablet, Mode Mobile
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  height: 100%;
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.4;
+  padding-inline: 16px;
+  padding-block: 16px 36px;
+  touch-action: manipulation;
+}
+[hidden] { display: none !important; }
+
+/* --------------------------------------------------------------------------
+   Design Tokens & Variables
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color Palette */
+  --paper: #e4dbc1;
+  --panel: #eee7d0;
+  --ink: #1d1b16;
+  --muted: #5f5a47;
+  --line: #2c2a22;
+  --cell-blank: #f5f0de;
+  --cell-given: #d6ccae;
+  --cell-rel: #e3ecf2;
+  --given-rel: #c5cbc2;
+  --accent: #0e4f87;
+  --accent-fg: #f7f2e2;
+  --accent-soft: rgba(14, 79, 135, 0.18);
+  --good: #1f7a37;
+  --good-soft: rgba(31, 122, 55, 0.14);
+  --bad: #b3261e;
+  --bad-soft: rgba(179, 38, 30, 0.14);
+  --hint: #8a5a00;
+  --heart: #800020;
+  --shade: rgba(60, 52, 30, 0.10);
+  --shade2: rgba(60, 52, 30, 0.06);
+  --overlay: rgba(20, 18, 12, 0.65);
+
+  /* Typography */
+  --font-display: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  --font-body: 'Lexend', 'Segoe UI', system-ui, sans-serif;
+
+  /* Responsive Sizing Tokens (Desktop Defaults) */
+  --wrap-max-width: 1080px;
+  --board-max-size: min(650px, calc(100dvh - 190px));
+  --btn-height: 46px;
+  --key-height: 48px;
+  --chip-size: 48px;
+  --line-width: 1px;
+  --board-border-width: 1px;
+  --cell-font-size: clamp(12px, 3.8cqw, 24px);
+  --panel-width: 340px;
+}
+
+/* Dark Mode (System & Manual) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #171a1e; --panel: #1f2328; --ink: #ebe6d4; --muted: #a8a38f; --line: #8c8873;
+    --cell-blank: #262b31; --cell-given: #121417; --cell-rel: #2c3a47; --given-rel: #1a2530;
+    --accent: #80c4ff; --accent-fg: #0a1826; --accent-soft: rgba(128, 196, 255, 0.22);
+    --good: #74d38d; --good-soft: rgba(116, 211, 141, 0.16);
+    --bad: #ff8f86; --bad-soft: rgba(255, 143, 134, 0.18);
+    --hint: #e6b655; --heart: #b3294a; --shade: rgba(255, 255, 255, 0.04); --shade2: rgba(255, 255, 255, 0.025);
+    --overlay: rgba(0, 0, 0, 0.75);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #171a1e; --panel: #1f2328; --ink: #ebe6d4; --muted: #a8a38f; --line: #8c8873;
+  --cell-blank: #262b31; --cell-given: #121417; --cell-rel: #2c3a47; --given-rel: #1a2530;
+  --accent: #80c4ff; --accent-fg: #0a1826; --accent-soft: rgba(128, 196, 255, 0.22);
+  --good: #74d38d; --good-soft: rgba(116, 211, 141, 0.16);
+  --bad: #ff8f86; --bad-soft: rgba(255, 143, 134, 0.18);
+  --hint: #e6b655; --heart: #b3294a; --shade: rgba(255, 255, 255, 0.04); --shade2: rgba(255, 255, 255, 0.025);
+  --overlay: rgba(0, 0, 0, 0.75);
+  color-scheme: dark;
+}
+
+/* --------------------------------------------------------------------------
+   MODE IFP (Interactive Flat Panel / Layar Penuh Papan Sentuh Kelas)
+   -------------------------------------------------------------------------- */
+:root.ifp-mode,
+:root:fullscreen {
+  --wrap-max-width: 1560px;
+  --board-max-size: min(880px, calc(100dvh - 160px));
+  --btn-height: 56px;
+  --key-height: 66px;
+  --chip-size: 56px;
+  --line-width: 2px;
+  --board-border-width: 2px;
+  --cell-font-size: clamp(16px, 3.9cqw, 34px);
+  --panel-width: 420px;
+  font-size: 17px;
+}
+
+:root.ifp-mode body,
+:root:fullscreen body {
+  padding-inline: 24px;
+  padding-block: 16px 28px;
+}
+
+/* --------------------------------------------------------------------------
+   Base UI Elements
+   -------------------------------------------------------------------------- */
+button, select {
+  font-family: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.shade {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.shade::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shade);
+  clip-path: polygon(0 0, 44% 0, 22% 46%, 0 38%);
+}
+.shade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shade2);
+  clip-path: polygon(100% 30%, 100% 100%, 38% 100%, 56% 62%);
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: var(--wrap-max-width);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: max-width 0.25s ease;
+}
+
+/* --------------------------------------------------------------------------
+   Header & Toolbar
+   -------------------------------------------------------------------------- */
+.top-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+.header-left {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.header-main {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+h1,
+.header-main h1 {
+  margin: 0;
+  font: 700 clamp(1.4rem, 3.8vw, 2.4rem)/1.1 var(--font-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  text-align: center;
+}
+.lede {
+  margin: 6px auto 0;
+  color: var(--muted);
+  max-width: 65ch;
+  font-size: clamp(0.85rem, 1.6vw, 0.95rem);
+  text-align: center;
+  text-wrap: pretty;
+}
+.header-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.btn-tool {
+  height: 38px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--cell-blank);
+  color: var(--ink);
+  font: 500 0.85rem var(--font-body);
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.btn-tool:hover {
+  background: var(--cell-given);
+}
+.btn-tool:active {
+  transform: translateY(1px);
+}
+.btn-tool[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.tool-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.theme-icon-sun { display: block; }
+.theme-icon-moon { display: none; }
+:root[data-theme="dark"] .theme-icon-sun { display: none; }
+:root[data-theme="dark"] .theme-icon-moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-sun { display: none; }
+  :root:not([data-theme="light"]) .theme-icon-moon { display: block; }
+}
+:root[data-theme="light"] .theme-icon-sun { display: block; }
+:root[data-theme="light"] .theme-icon-moon { display: none; }
+
+/* --------------------------------------------------------------------------
+   Level Bar & Level Selector
+   -------------------------------------------------------------------------- */
+.levelbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+}
+.levels-scroll {
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.levels-scroll::-webkit-scrollbar { display: none; }
+
+.levels {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+.chip {
+  min-width: var(--chip-size);
+  height: var(--chip-size);
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: var(--line-width) solid var(--line);
+  border-radius: 4px;
+  background: var(--cell-blank);
+  font: 500 1rem/1 var(--font-body);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.chip .st {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+}
+.chip:hover {
+  background: var(--cell-given);
+}
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.chip:active, .btn:active, .key:active {
+  transform: translateY(1px);
+}
+
+.diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+.diff select {
+  height: 38px;
+  padding: 0 10px;
+  border: var(--line-width) solid var(--line);
+  border-radius: 4px;
+  background: var(--cell-blank);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Game Layout (Board + Control Panel)
+   -------------------------------------------------------------------------- */
+.game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--panel-width);
+  gap: 24px 32px;
+  align-items: start;
+}
+
+/* --------------------------------------------------------------------------
+   Board Component
+   -------------------------------------------------------------------------- */
+.board-col {
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.board-wrap {
+  width: 100%;
+  max-width: var(--board-max-size);
+  aspect-ratio: 1;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  margin-inline: auto;
+}
+.board {
+  --zoom: 1;
+  width: calc(100% * var(--zoom));
+  aspect-ratio: 1;
+  padding: 1px;
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  grid-template-rows: repeat(13, 1fr);
+  container-type: inline-size;
+  transition: width 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+.cell {
+  position: relative;
+  margin: -1px 0 0 -1px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: var(--board-border-width) solid var(--line);
+  border-radius: 0;
+  background: var(--cell-given);
+  color: var(--ink);
+  font: 400 var(--cell-font-size)/1 var(--font-body);
+  font-variant-numeric: tabular-nums;
+  appearance: none;
+  -webkit-appearance: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+button.cell {
+  background: var(--cell-blank);
+  color: var(--accent);
+  font-weight: 500;
+  cursor: pointer;
+}
+button.cell:hover {
+  background: var(--cell-rel);
+}
+.cell.rel {
+  background: var(--given-rel);
+}
+button.cell.rel {
+  background: var(--cell-rel);
+}
+.cell.hinted {
+  color: var(--hint);
+}
+.cell.hinted::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-style: solid;
+  border-width: 1.7cqw 1.7cqw 0 0;
+  border-color: var(--hint) transparent transparent transparent;
+}
+.cell.ok {
+  box-shadow: inset 0 0 0 2px var(--good);
+  background: var(--good-soft);
+}
+.cell.bad {
+  box-shadow: inset 0 0 0 2px var(--bad);
+  background: var(--bad-soft);
+}
+.cell.ok::after, .cell.bad::after {
+  position: absolute;
+  top: 3%;
+  right: 7%;
+  font-size: 0.72em;
+  font-weight: 700;
+}
+.cell.ok::after { content: '✓'; color: var(--good); }
+.cell.bad::after { content: '✗'; color: var(--bad); }
+
+.cell.sel {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  z-index: 3;
+  background: var(--accent-soft);
+}
+button.cell:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: -3px;
+  z-index: 3;
+}
+.board.done button.cell { cursor: default; }
+
+/* --------------------------------------------------------------------------
+   Control Panel & Keypad
+   -------------------------------------------------------------------------- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.panel-head h2 {
+  margin: 0;
+  font: 700 1.25rem/1.2 var(--font-display);
+}
+.panel-head h2 span {
+  color: var(--muted);
+  font: 400 0.85rem var(--font-body);
+  margin-left: 8px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 10px 0;
+  border-block: var(--line-width) solid var(--line);
+}
+.stats dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.stats dd {
+  margin: 2px 0 0;
+  font: 500 1.35rem/1.2 var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.btn {
+  height: var(--btn-height);
+  padding: 0 10px;
+  border: var(--line-width) solid var(--line);
+  border-radius: 4px;
+  background: transparent;
+  font: 500 0.9rem var(--font-body);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+.btn:hover {
+  background: var(--cell-blank);
+}
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+.btn.primary:hover {
+  opacity: 0.94;
+}
+.btn-icon {
+  width: 1.15em;
+  height: 1.15em;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+.msg {
+  margin: 0;
+  min-height: 2.8em;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+.msg.good { color: var(--good); font-weight: 500; }
+.msg.bad { color: var(--bad); font-weight: 500; }
+
+.keypad-wrap {
+  background: var(--paper);
+}
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.key {
+  height: var(--key-height);
+  border: var(--line-width) solid var(--line);
+  border-radius: 4px;
+  background: var(--cell-blank);
+  font: 500 1.3rem/1 var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease, transform 0.08s ease;
+}
+.key:hover:not(:disabled) {
+  background: var(--cell-given);
+}
+.key.op { background: var(--cell-given); }
+.key.op:hover:not(:disabled) { filter: brightness(0.95); }
+.key.del { font-size: 1.15rem; }
+.key:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Selesai (Win Screen)
+   -------------------------------------------------------------------------- */
+.win {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: var(--overlay);
+  backdrop-filter: blur(4px);
+}
+.win[hidden] { display: none; }
+.win-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 28px;
+  background: var(--panel);
+  border: var(--line-width) solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+.win-card h2 {
+  margin: 0;
+  font: 700 2rem/1.1 var(--font-display);
+}
+.win-stars {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 10px;
+}
+.win-stars svg {
+  width: 38px;
+  height: 38px;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.win-stars svg.on {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+.win-card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0 0 20px;
+  font-size: 0.95rem;
+}
+.win-card dt { color: var(--muted); }
+.win-card dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 500; }
+.win-actions { display: grid; gap: 8px; }
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4em;
+  padding-top: 14px;
+  border-top: var(--line-width) solid var(--line);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.heart {
+  width: 1.2em;
+  height: 1.2em;
+  fill: var(--heart);
+  flex: none;
+  transform-origin: center;
+  animation: beat 1.3s ease-in-out infinite;
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.22) rotate(-6deg); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18) rotate(6deg); }
+  60% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Tablet, Mobile, IFP)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. MODE TABLET (Portrait: 601px - 880px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 601px) and (max-width: 880px) {
+  .game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .board-col {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .board-wrap {
+    max-width: min(540px, 90vw);
+  }
+  .panel {
+    width: 100%;
+    max-width: 540px;
+    gap: 12px;
+  }
+  .actions {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .btn {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+  .keypad-wrap {
+    width: 100%;
+  }
+  .keypad {
+    gap: 8px;
+  }
+  .key {
+    height: 52px;
+    font-size: 1.35rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. MODE MOBILE (Portrait: <= 600px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  body {
+    padding-inline: 12px;
+    padding-block: 10px calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  .wrap {
+    gap: 12px;
+  }
+  .top-header {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "left right"
+      "main main";
+    gap: 10px;
+    align-items: center;
+  }
+  .header-left {
+    grid-area: left;
+    justify-content: flex-start;
+  }
+  .header-right {
+    grid-area: right;
+    justify-content: flex-end;
+  }
+  .header-main {
+    grid-area: main;
+    text-align: center;
+  }
+  .header-main h1 {
+    font-size: clamp(1.35rem, 5.6vw, 1.75rem);
+    text-align: center;
+  }
+  .lede {
+    font-size: 0.82rem;
+    line-height: 1.35;
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .levelbar {
+    gap: 8px;
+  }
+  .levels-scroll {
+    flex: 1 1 auto;
+  }
+  .chip {
+    min-width: 44px;
+    height: 44px;
+    padding: 0 8px;
+    font-size: 0.9rem;
+  }
+  .diff {
+    font-size: 0.8rem;
+  }
+  .diff select {
+    height: 36px;
+    font-size: 0.85rem;
+  }
+
+  .game {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .board-wrap {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 4px;
+  }
+
+  .panel {
+    display: contents;
+  }
+  .panel-head {
+    order: 1;
+  }
+  .stats {
+    order: 2;
+    padding: 8px 0;
+  }
+  .stats dt {
+    font-size: 0.65rem;
+  }
+  .stats dd {
+    font-size: 1.2rem;
+  }
+  .actions {
+    order: 3;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .btn {
+    height: 44px;
+    padding: 0 4px;
+    font-size: 0.78rem;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .btn-icon {
+    width: 1.1em;
+    height: 1.1em;
+  }
+  .msg {
+    order: 4;
+    min-height: 2em;
+    font-size: 0.85rem;
+  }
+
+  /* Keypad menempel di bawah (sticky) dengan safe area */
+  .keypad-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    background: var(--paper);
+    border-top: var(--line-width) solid var(--line);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+  }
+  .keypad {
+    max-width: 440px;
+    margin-inline: auto;
+    gap: 5px;
+  }
+  .key {
+    height: 46px;
+    font-size: 1.25rem;
+  }
+
+  .foot {
+    order: 10;
+    margin-bottom: 20px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. MODE MOBILE LANDSCAPE (Short screens: orientation landscape & height <= 540px)
+   -------------------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 540px) {
+  body {
+    padding-inline: 14px;
+    padding-block: 8px 16px;
+  }
+  .wrap {
+    gap: 8px;
+  }
+  .top-header {
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-main h1 {
+    font-size: 1.25rem;
+  }
+  .lede {
+    display: none;
+  }
+  .btn-tool {
+    height: 32px;
+    padding: 0 8px;
+    font-size: 0.78rem;
+  }
+  .levelbar {
+    gap: 6px;
+  }
+  .chip {
+    min-width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
+  }
+  .diff select {
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .game {
+    display: grid !important;
+    grid-template-columns: minmax(0, auto) minmax(280px, 1fr) !important;
+    gap: 16px !important;
+    align-items: start;
+  }
+  .board-col {
+    display: flex;
+    justify-content: center;
+  }
+  .board-wrap {
+    max-width: min(78dvh, 46vw);
+    aspect-ratio: 1;
+  }
+  .panel {
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+    max-height: calc(100dvh - 90px);
+    overflow-y: auto;
+  }
+  .stats {
+    padding: 4px 0;
+  }
+  .stats dd {
+    font-size: 1.1rem;
+  }
+  .actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+  }
+  .btn {
+    height: 36px;
+    padding: 0 6px;
+    font-size: 0.78rem;
+    flex-direction: row;
+  }
+  .keypad-wrap {
+    position: static !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-top: none !important;
+  }
+  .keypad {
+    gap: 4px;
+  }
+  .key {
+    height: 38px;
+    font-size: 1.15rem;
+  }
+  .foot {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. EXTRA LARGE IFP / 4K DISPLAY ENHANCEMENTS
+   -------------------------------------------------------------------------- */
+@media (min-width: 1600px) and (min-height: 900px) {
+  :root:not(.ifp-mode) {
+    --wrap-max-width: 1360px;
+    --board-max-size: min(760px, calc(100dvh - 200px));
+    --panel-width: 380px;
+    --btn-height: 50px;
+    --key-height: 56px;
+    --chip-size: 52px;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Game teka-teki silang matematika interaktif berbasis web. Latih logika berhitung dengan 20 persamaan silang, 5 level bertingkat, mode acak tak terbatas, dan ramah layar sentuh IFP/Tablet/HP.">
+<meta name="theme-color" id="themeColor" content="#e4dbc1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TTS Matematika">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TTS Matematika - Teka-Teki Silang Berhitung">
+<meta property="og:description" content="Latih kemampuan berhitung dan logika matematika dengan teka-teki silang interaktif gratis tanpa instalasi.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TTS Matematika">
+<meta name="twitter:description" content="Game teka-teki silang matematika gratis tanpa instalasi dan tanpa iklan.">
+<title>TTS Matematika</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230e4f87'/><path d='M8 12h16M16 8v8M9 22l6-6m-6 0l6 6M20 18h4m-4 4h4' stroke='%23f7f2e2' stroke-width='2' stroke-linecap='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Lexend:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shade" aria-hidden="true"></div>
+<main class="wrap">
+  <header class="top-header">
+    <div class="header-left">
+      <button class="btn-tool" id="ifpToggle" type="button" aria-pressed="false" title="Mode IFP / Layar Penuh untuk Papan Interaktif">
+        <svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm16 4h-4v2h6v-6h-2v4z"/></svg>
+        <span class="tool-label">Mode IFP</span>
+      </button>
+    </div>
+    <div class="header-main">
+      <h1>Teka-Teki Silang Matematika</h1>
+      <p class="lede">Isi kotak kosong sampai semua persamaan, mendatar dan menurun, bernilai benar. Kotak sudut dipakai dua persamaan sekaligus.</p>
+    </div>
+    <div class="header-right" role="toolbar" aria-label="Pengaturan tampilan">
+      <button class="btn-tool" id="themeToggle" type="button" aria-label="Ganti tema gelap atau terang" title="Ganti tema gelap/terang">
+        <svg class="tool-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="tool-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="levelbar">
+    <div class="levels-scroll">
+      <div class="levels" id="levels" role="group" aria-label="Pilih level"></div>
+    </div>
+    <label class="diff" for="diff"><span>Tingkat acak</span>
+      <select id="diff">
+        <option value="2">Mudah</option>
+        <option value="4" selected>Sedang</option>
+        <option value="5">Sulit</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="game">
+    <section class="board-col" aria-label="Papan teka-teki">
+      <div class="board-wrap" id="boardWrap"><div class="board" id="board"></div></div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-head">
+        <h2 id="lvlname">Level 1</h2>
+      </div>
+      <dl class="stats">
+        <div><dt>Waktu</dt><dd id="time">0:00</dd></div>
+        <div><dt>Petunjuk</dt><dd id="hints">0</dd></div>
+        <div><dt>Terisi</dt><dd id="filled">0/0</dd></div>
+      </dl>
+      <div class="actions">
+        <button class="btn primary" id="checkBtn" type="button">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+          <span>Periksa</span>
+        </button>
+        <button class="btn" id="hintBtn" type="button">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+          <span>Petunjuk</span>
+        </button>
+        <button class="btn" id="resetBtn" type="button">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          <span>Ulangi</span>
+        </button>
+        <button class="btn" id="zoomBtn" type="button" aria-pressed="false">
+          <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zm.5-7H9v2H7v1h2v2h1v-2h2V9h-2V7z"/></svg>
+          <span>Perbesar</span>
+        </button>
+      </div>
+      <p class="msg" id="msg" role="status" aria-live="polite"></p>
+      <div class="keypad-wrap"><div class="keypad" id="keypad" role="group" aria-label="Papan tombol angka dan operator"></div></div>
+    </aside>
+  </div>
+
+  <footer class="foot">
+    <span>Made with</span>
+    <svg class="heart" viewBox="0 0 24 24" role="img" aria-label="cinta"><path d="M12 21.2l-1.45-1.32C5.4 15.2 2 12.1 2 8.3 2 5.2 4.4 2.8 7.5 2.8c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.1 0 5.5 2.4 5.5 5.5 0 3.8-3.4 6.9-8.55 11.58L12 21.2z"/></svg>
+    <span>by Aan Triono</span>
+  </footer>
+</main>
+
+<div class="win" id="win" hidden role="dialog" aria-modal="true" aria-labelledby="winTitle">
+  <div class="win-card">
+    <h2 id="winTitle">Selamat, selesai!</h2>
+    <div class="win-stars" id="winStars" aria-label=""></div>
+    <dl>
+      <dt>Waktu</dt><dd id="winTime"></dd>
+      <dt>Petunjuk dipakai</dt><dd id="winHints"></dd>
+    </dl>
+    <div class="win-actions">
+      <button class="btn primary" id="winNext" type="button"></button>
+      <button class="btn" id="winAgain" type="button">Main lagi</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
