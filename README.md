@@ -62,6 +62,18 @@ Cukup unduh berkas repositori ini, lalu klik ganda berkas `index.html`. Permaina
 3. Di bagian **Build and deployment**, pilih branch `main` (atau `master`) dan folder `/ (root)`.
 4. Klik **Save**. Game dapat diakses melalui `https://<username>.github.io/<nama-repo>/`.
 
+### 3. Pengembangan (opsional, butuh Node.js 18+)
+Game tidak membutuhkan Node.js. Node hanya dipakai untuk alat bantu pengembang:
+
+```bash
+node --test test.js            # menjalankan uji otomatis
+node gen-levels.js             # pratinjau Level 2–5 baru tanpa mengubah berkas
+node gen-levels.js --write     # menulis Level 2–5 baru ke script.js
+node gen-levels.js --seed=7    # memakai seed lain
+```
+
+Kedua skrip membaca bagian **Engine** langsung dari `script.js`, jadi penanda `/* ===== 1. Engine`, `/* ===== 2. Level 2-5`, dan `/* ===== 3. Antarmuka` jangan dihapus.
+
 ---
 
 ## 📁 Struktur Berkas
@@ -73,6 +85,8 @@ Semua berkas berada dalam satu folder:
 | `index.html` | Struktur antarmuka, metadata SEO/PWA, dan elemen game |
 | `style.css` | Tampilan visual, sistem desain responsif 4 mode, dan tema |
 | `script.js` | Logika permainan, generator soal, solver, dan penanganan layar |
+| `gen-levels.js` | Skrip Node untuk membuat ulang data Level 2–5 di `script.js` |
+| `test.js` | Uji otomatis engine: validitas level, keunikan jawaban, dan generator |
 | `LICENSE` | Lisensi open-source (MIT License) |
 | `.gitignore` | Konfigurasi pengabaian berkas sistem dan editor |
 
