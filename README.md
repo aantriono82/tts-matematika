@@ -4,6 +4,8 @@ Game teka-teki silang matematika berbasis web untuk melatih kemampuan berhitung 
 
 Dibuat menggunakan **HTML, CSS, dan JavaScript murni** (*zero dependency*). Berjalan langsung di peramban tanpa instalasi server maupun proses *build*.
 
+🔗 **Main sekarang: [tts-matematika.pages.dev](https://tts-matematika.pages.dev/)**
+
 ---
 
 ## ✨ Fitur
@@ -56,13 +58,23 @@ Dibuat menggunakan **HTML, CSS, dan JavaScript murni** (*zero dependency*). Berj
 ### 1. Jalankan di Komputer Lokal
 Cukup unduh berkas repositori ini, lalu klik ganda berkas `index.html`. Permainan dapat langsung dimainkan secara *offline*.
 
-### 2. Pasang di GitHub Pages
+### 2. Pasang di Cloudflare Pages
+Versi resmi game ini dihosting di Cloudflare Pages: [tts-matematika.pages.dev](https://tts-matematika.pages.dev/).
+
+1. Di dasbor Cloudflare, buka **Workers & Pages** → **Create** → **Pages**.
+2. Hubungkan repositori Git, atau pilih **Upload assets** untuk mengunggah folder secara langsung.
+3. Biarkan **Build command** kosong dan isi **Build output directory** dengan `/`.
+4. Simpan. Game dapat diakses melalui `https://<nama-proyek>.pages.dev/`.
+
+Alternatif lewat terminal: `npx wrangler pages deploy . --project-name=<nama-proyek>`.
+
+### 3. Pasang di GitHub Pages
 1. Unggah seluruh berkas ke repositori GitHub Anda.
 2. Buka menu **Settings** → **Pages**.
 3. Di bagian **Build and deployment**, pilih branch `main` (atau `master`) dan folder `/ (root)`.
 4. Klik **Save**. Game dapat diakses melalui `https://<username>.github.io/<nama-repo>/`.
 
-### 3. Pengembangan (opsional, butuh Node.js 18+)
+### 4. Pengembangan (opsional, butuh Node.js 18+)
 Game tidak membutuhkan Node.js. Node hanya dipakai untuk alat bantu pengembang:
 
 ```bash
