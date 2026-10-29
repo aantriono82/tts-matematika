@@ -695,9 +695,17 @@ button.cell:focus-visible {
    2. MODE MOBILE (Portrait: <= 600px)
    -------------------------------------------------------------------------- */
 @media (max-width: 600px) {
-  body {
+  :root {
+    --mobile-key-height: 46px;
+    /* tinggi keypad sticky: 3 baris tombol + 2 celah + padding atas/bawah + garis */
+    --keypad-space: calc(3 * var(--mobile-key-height) + 2 * 5px + 16px + 2px);
+  }
+  /* selector IFP/fullscreen disertakan agar padding IFP tidak menimpa ruang keypad di HP */
+  body,
+  :root.ifp-mode body,
+  :root:fullscreen body {
     padding-inline: 12px;
-    padding-block: 10px calc(80px + env(safe-area-inset-bottom, 0px));
+    padding-block: 10px calc(var(--keypad-space) + 16px + env(safe-area-inset-bottom, 0px));
   }
   .wrap {
     gap: 12px;
@@ -821,13 +829,12 @@ button.cell:focus-visible {
     gap: 5px;
   }
   .key {
-    height: 46px;
+    height: var(--mobile-key-height);
     font-size: 1.25rem;
   }
 
   .foot {
     order: 10;
-    margin-bottom: 20px;
   }
 }
 
@@ -835,7 +842,9 @@ button.cell:focus-visible {
    3. MODE MOBILE LANDSCAPE (Short screens: orientation landscape & height <= 540px)
    -------------------------------------------------------------------------- */
 @media (orientation: landscape) and (max-height: 540px) {
-  body {
+  body,
+  :root.ifp-mode body,
+  :root:fullscreen body {
     padding-inline: 14px;
     padding-block: 8px 16px;
   }
