@@ -670,6 +670,7 @@ window.TTS_LEVELS = [{"id":2,"solution":{"0,0":3,"0,1":"+","0,2":21,"0,3":"=","0
   $('zoomBtn').addEventListener('click', function () {
     zoom = zoom === 1 ? 1.6 : 1;
     boardEl.style.setProperty('--zoom', zoom);
+    $('boardWrap').classList.toggle('zoomed', zoom > 1);
     var label = this.querySelector('span');
     if (label) label.textContent = zoom === 1 ? 'Perbesar' : 'Perkecil';
     else this.textContent = zoom === 1 ? 'Perbesar' : 'Perkecil';

@@ -353,10 +353,12 @@ h1,
   width: 100%;
   max-width: var(--board-max-size);
   aspect-ratio: 1;
+  margin-inline: auto;
+}
+/* papan hanya bisa digeser sendiri saat diperbesar; selain itu gesekan diteruskan ke halaman */
+.board-wrap.zoomed {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  margin-inline: auto;
 }
 .board {
   --zoom: 1;
